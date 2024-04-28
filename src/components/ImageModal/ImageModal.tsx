@@ -1,8 +1,16 @@
+import { FC } from "react";
 import css from "./ImageModal.module.css";
 
 import Modal from "react-modal";
+import { LargeImg } from "../types";
 
-const ImageModal = ({ isOpen, onRequestClose, largeImg }) => {
+interface ImageModalProps {
+    isOpen: boolean;
+    onRequestClose: () => void;
+    largeImg: LargeImg;
+}
+
+const ImageModal: FC<ImageModalProps> = ({ isOpen, onRequestClose, largeImg }) => {
     Modal.setAppElement("#root");
 
     return (

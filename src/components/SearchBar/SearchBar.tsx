@@ -3,9 +3,18 @@ import { IoIosSearch } from "react-icons/io";
 import toast from "react-hot-toast";
 
 import css from "./SearchBar.module.css";
+import { FC } from "react";
 
-const SearchBar = ({ onSearch }) => {
-    const handleSubmit = ({ query }) => {
+interface SearchBarProps {
+    onSearch: (query: string) => void;
+}
+
+interface handleSubmitProps {
+    query: string;
+}
+
+const SearchBar: FC<SearchBarProps> = ({ onSearch }) => {
+    const handleSubmit = ({ query }: handleSubmitProps) => {
         if (query.trim() === "") {
             toast.error("This field cannot be empty.");
 

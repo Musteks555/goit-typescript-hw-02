@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { MouseEvent, useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 import { fetchImagesWithQuery } from "../../images-api";
@@ -10,33 +10,28 @@ import ImageGallery from "../ImageGallery/ImageGallery";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import ImageModal from "../ImageModal/ImageModal";
 
-function App() {
-    const [images, setImages] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
-    const [loadMore, setLoadMore] = useState(false);
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState(null);
-    const [page, setPage] = useState(1);
-    const [largeImg, setLargeImg] = useState({ dataSrc: "", dataAlt: "" });
+import { ImageData, Images, LargeImg } from "../types";
 
-    function openModal(event) {
-        let dataSrc = "";
-        let dataAlt = "";
-        if (event.currentTarget.tagName === "DIV") {
-            dataSrc = event.currentTarget.dataset.src;
-            dataAlt = event.currentTarget.firstElementChild.getAttribute("alt");
-        } else {
-            dataSrc = event.currentTarget.parentNode.dataset.src;
-            dataAlt = event.currentTarget.getAttribute("alt");
-        }
+function App() {
+    const [images, setImages] = useState<Images[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<boolean>(false);
+    const [loadMore, setLoadMore] = useState<boolean>(false);
+    const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+    const [searchQuery, setSearchQuery] = useState<string | null>(null);
+    const [page, setPage] = useState<number>(1);
+    const [largeImg, setLargeImg] = useState<LargeImg>({ dataSrc: "", dataAlt: "" });
+
+    function openModal(event: MouseEvent<HTMLElement>): void {
+        const dataSrc: string = event.target.parentNode.dataset.src;
+        const dataAlt: string = event.target.getAttribute("alt");
 
         onSetLargeImg({ dataSrc, dataAlt });
 
         setModalIsOpen(true);
     }
 
-    function closeModal() {
+    function closeModal(): void {
         setModalIsOpen(false);
     }
 
@@ -49,8 +44,7 @@ function App() {
                 setError(false);
                 setLoading(true);
 
-                const data = await fetchImagesWithQuery({ searchQuery, page });
-                console.log(data);
+                const data = await fetchImagesWithQuery<ImageData>({ searchQuery, page });
 
                 setImages((prevState) => prevState.concat(data.results));
 
@@ -70,29 +64,29 @@ function App() {
         fetchDataByQuery();
     }, [searchQuery, page]);
 
-    const onSetSearchQuery = (query) => {
+    const onSetSearchQuery = (query: string): void => {
         setSearchQuery(query);
         setPage(1);
         setImages([]);
     };
 
-    const onSetLargeImg = (data) => {
+    const onSetLargeImg = (data: LargeImg): void => {
         setLargeImg(data);
     };
 
-    const onSetPage = () => {
-        setPage((prevState) => prevState + 1);
+    const onSetPage = (): void => {
+        setPage((prevState: number) => prevState + 1);
     };
 
     return (
         <>
             <SearchBar onSearch={onSetSearchQuery} />
-            {loading && <Loader />}
-            {error && <Error />}
-            {images.length > 0 && <ImageGallery items={images} onHandleClick={openModal} />}
+            {images.length > 0 && <ImageGallery images={images} onHandleClick={openModal} />}
             {loadMore && <LoadMoreBtn onHandleClick={onSetPage} />}
             <ImageModal isOpen={modalIsOpen} onRequestClose={closeModal} largeImg={largeImg} />
             <Toaster position="top-right" reverseOrder={false} />
+            {loading && <Loader />}
+            {error && <Error />}
         </>
     );
 }
