@@ -23,8 +23,18 @@ function App() {
     const [largeImg, setLargeImg] = useState<LargeImg>({ dataSrc: "", dataAlt: "" });
 
     function openModal(event: MouseEvent<HTMLElement>): void {
-        const dataSrc: string = event.target.parentNode.dataset.src;
-        const dataAlt: string = event.target.getAttribute("alt");
+        if (!(event.target instanceof HTMLElement)) {
+            return;
+        }
+
+        const parent = (event.target as HTMLElement).parentNode;
+
+        if (!(parent instanceof HTMLElement && parent.dataset.src)) {
+            return;
+        }
+
+        const dataSrc: string = parent.dataset.src;
+        const dataAlt: string = event.target.getAttribute("alt") || "Image";
 
         onSetLargeImg({ dataSrc, dataAlt });
 
