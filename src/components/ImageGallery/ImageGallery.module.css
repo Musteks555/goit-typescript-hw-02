@@ -1,0 +1,12 @@
+.galleryList {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: 16px 24px;
+
+    margin: 24px 12px;
+}
+
+.galleryItem {
+    width: calc((100% - 72px) / 4);
+}
